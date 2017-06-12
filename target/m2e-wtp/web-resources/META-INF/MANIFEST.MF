@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Implementation-Title: datascienceplatform-oauth2
+Implementation-Version: 1.0.0-SNAPSHOT
+Built-By: c3smagic
+Implementation-Vendor-Id: nl.knmi.adagucservices
+Build-Jdk: 1.8.0_131
+Implementation-URL: http://projects.spring.io/spring-boot/datasciencep
+ latform-oauth2/
+Created-By: Maven Integration for Eclipse
+Implementation-Vendor: Pivotal Software, Inc.
+Main-Class: nl.knmi.adaguc.AdagucServicesApplication
+
