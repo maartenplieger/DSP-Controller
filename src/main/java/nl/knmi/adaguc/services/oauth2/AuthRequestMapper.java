@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import nl.knmi.adaguc.config.ConfigurationItemNotFoundException;
 import nl.knmi.adaguc.tools.Debug;
 import nl.knmi.adaguc.tools.JSONResponse;
 
@@ -32,21 +34,62 @@ public class AuthRequestMapper {
 				new MappingJackson2HttpMessageConverter(mapper);
 		return converter;
 	}
+	
+	@CrossOrigin
 	@ResponseBody
 	@RequestMapping(
-			path="oauth2",
-			method = RequestMethod.GET, 
-			produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public void getUserInfoFromX509Cert(HttpServletResponse response, HttpServletRequest request) throws JSONException, IOException{
+			path="oauth",
+			method = RequestMethod.GET 
+		)
+	public void doOauth(HttpServletResponse response, HttpServletRequest request) throws JSONException, IOException, ConfigurationItemNotFoundException{
+		//JSONResponse jsonResponse = new JSONResponse(request);
+//		jsonResponse.setMessage(new JSONObject().put("Test","Test"));
+		OAuth2Handler.doGet(request, response);
+		//jsonResponse.print(response);
+
+	}
+	
+	@CrossOrigin
+	@RequestMapping(
+			path="getid",
+			method = RequestMethod.GET 
+		)
+	public void getId(HttpServletResponse response, HttpServletRequest request) throws JSONException, IOException, ConfigurationItemNotFoundException{
+		Debug.println("GetID");
 		JSONResponse jsonResponse = new JSONResponse(request);
-		Debug.println("YESSS");
-		jsonResponse.setMessage(new JSONObject().put("test","test"));
-		
+
+		String id = (String) request.getSession().getAttribute("user_identifier");
+
+		if(id == null || id.length() == 0){
+			jsonResponse.setMessage(new JSONObject().put("error","Not signed in"));
+			Debug.println("GetID not signed in");
+		}else{
+			jsonResponse.setMessage(new JSONObject().put("id",id));
+			Debug.println("GetID Signed in");
+		}
 		jsonResponse.print(response);
 
 	}
 	
-	
-	
+	@CrossOrigin
+	@RequestMapping(
+			path="logout",
+			method = RequestMethod.GET 
+		)
+	public void doLogout(HttpServletResponse response, HttpServletRequest request) throws JSONException, IOException, ConfigurationItemNotFoundException{
+		JSONResponse jsonResponse = new JSONResponse(request);
+		
+		String id = (String) request.getSession().getAttribute("user_identifier");
+		
+		if(id !=null){
+			request.getSession().setAttribute("user_identifier",null);
+			jsonResponse.setMessage(new JSONObject().put("message","ok logged out"));
+		}else{
+			jsonResponse.setMessage(new JSONObject().put("message","already logged out"));
+		}
+		
+		jsonResponse.print(response);
+
+	}
 
 }
