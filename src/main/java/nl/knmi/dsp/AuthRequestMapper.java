@@ -1,4 +1,4 @@
-package nl.knmi.adaguc.services.oauth2;
+package nl.knmi.dsp;
 
 import java.io.IOException;
 
@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import nl.knmi.adaguc.config.ConfigurationItemNotFoundException;
+import nl.knmi.adaguc.services.oauth2.OAuth2Handler;
 import nl.knmi.adaguc.tools.Debug;
 import nl.knmi.adaguc.tools.JSONResponse;
 
@@ -48,6 +49,14 @@ public class AuthRequestMapper {
 		//jsonResponse.print(response);
 
 	}
+	/**
+	 * Small function to check if the Id is unknown.
+	 * @param id
+	 * @return
+	 */
+	private boolean isIdUnknown(String id) {
+		return id == null || id.length() == 0;
+	}
 	
 	@CrossOrigin
 	@RequestMapping(
@@ -59,14 +68,38 @@ public class AuthRequestMapper {
 		JSONResponse jsonResponse = new JSONResponse(request);
 
 		String id = (String) request.getSession().getAttribute("user_identifier");
+		String servicesAccessToken = (String) request.getSession().getAttribute("services_access_token");
+		String emailAddress = (String) request.getSession().getAttribute("emailaddress");
 
-		if(id == null || id.length() == 0){
-			jsonResponse.setMessage(new JSONObject().put("error","Not signed in"));
+		JSONObject jsonObj = new JSONObject();
+		
+		if(isIdUnknown(id)){
+			jsonObj.put("error","Not signed in");
 			Debug.println("GetID not signed in");
 		}else{
-			jsonResponse.setMessage(new JSONObject().put("id",id));
+			jsonObj.put("id",id);
 			Debug.println("GetID Signed in");
 		}
+		
+		if(servicesAccessToken == null || servicesAccessToken.length() == 0
+				|| isIdUnknown(id)){
+			jsonObj.put("error","Not signed in");
+			Debug.println("GetID not signed in");
+		}else{
+			jsonObj.put("services_access_token",servicesAccessToken);
+			Debug.println("GetID Signed in");
+		}
+		
+		if(emailAddress == null || emailAddress.length() == 0
+				|| isIdUnknown(id)){
+			jsonObj.put("error","Not signed in");
+			Debug.println("GetID not signed in");
+		}else{
+			jsonObj.put("email_address",emailAddress);
+			Debug.println("GetID Signed in");
+		}
+		
+		jsonResponse.setMessage(jsonObj);
 		jsonResponse.print(response);
 
 	}
