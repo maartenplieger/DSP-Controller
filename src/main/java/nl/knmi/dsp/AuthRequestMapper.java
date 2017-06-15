@@ -70,6 +70,7 @@ public class AuthRequestMapper {
 		String id = (String) request.getSession().getAttribute("user_identifier");
 		String servicesAccessToken = (String) request.getSession().getAttribute("services_access_token");
 		String emailAddress = (String) request.getSession().getAttribute("emailaddress");
+		String domain = (String) request.getSession().getAttribute("domain");
 
 		JSONObject jsonObj = new JSONObject();
 		
@@ -96,6 +97,15 @@ public class AuthRequestMapper {
 			Debug.println("GetID not signed in");
 		}else{
 			jsonObj.put("email_address",emailAddress);
+			Debug.println("GetID Signed in");
+		}
+		
+		if(domain == null || domain.length() == 0
+				|| isIdUnknown(id)){
+			jsonObj.put("error","Not signed in");
+			Debug.println("GetID not signed in");
+		}else{
+			jsonObj.put("domain",domain);
 			Debug.println("GetID Signed in");
 		}
 		

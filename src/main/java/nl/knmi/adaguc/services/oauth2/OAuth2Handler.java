@@ -529,8 +529,9 @@ keytool -import -v -trustcacerts -alias slcs.ceda.ac.uk -file  slcs.ceda.ac.uk -
     request.getSession().setAttribute("login_method", "oauth2");
     
     try {
-		String accessToken = makeUserCertificate(userInfo.user_identifier.replaceAll("/", "."));
-	    request.getSession().setAttribute("services_access_token", accessToken);
+    	JSONObject accessToken = makeUserCertificate(userInfo.user_identifier.replaceAll("/", "."));
+	    request.getSession().setAttribute("services_access_token", accessToken.get("token"));
+	    request.getSession().setAttribute("domain", accessToken.get("domain"));
 	} catch (InvalidKeyException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -573,7 +574,7 @@ keytool -import -v -trustcacerts -alias slcs.ceda.ac.uk -file  slcs.ceda.ac.uk -
 	}
   };
   
-  private static String makeUserCertificate(String clientId) throws CertificateException, IOException, InvalidKeyException, NoSuchAlgorithmException, OperatorCreationException, KeyManagementException, UnrecoverableKeyException, KeyStoreException, NoSuchProviderException, SignatureException, GSSException, ConfigurationItemNotFoundException, CertificateVerificationException, JSONException {
+  private static JSONObject makeUserCertificate(String clientId) throws CertificateException, IOException, InvalidKeyException, NoSuchAlgorithmException, OperatorCreationException, KeyManagementException, UnrecoverableKeyException, KeyStoreException, NoSuchProviderException, SignatureException, GSSException, ConfigurationItemNotFoundException, CertificateVerificationException, JSONException {
 
 	Debug.println("Making user cert for "+clientId);
     X509Certificate caCertificate = PemX509Tools.readCertificateFromPEM("/usr/people/tjalma/hackaton_config/config/knmi_ds_ca.pem");
@@ -636,12 +637,13 @@ wget --no-check-certificate --private-key /tmp/test.key --certificate /tmp/test.
 
     Debug.println("Created user cert");
     //String url = "https://pc160116.knmi.nl:8090/wps?service=wps&request=getcapabilities";
-    String url = "https://pc160116.knmi.nl:8090/registertoken";
+    String url = "https://bhw451.knmi.nl:8090/registertoken";
     CloseableHttpResponse httpResponse = httpClient.execute(new HttpGet(url));
 	String result = EntityUtils.toString(httpResponse.getEntity());
 	JSONObject resultAsJSON = new JSONObject(result);
+	resultAsJSON.put("domain", "https://bhw451.knmi.nl:8090");
 	httpResponse.close();
-	return resultAsJSON.getString("token");
+	return resultAsJSON;
 
   }
 
