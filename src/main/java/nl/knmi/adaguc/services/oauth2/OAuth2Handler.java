@@ -533,6 +533,7 @@ keytool -import -v -trustcacerts -alias slcs.ceda.ac.uk -file  slcs.ceda.ac.uk -
 	    request.getSession().setAttribute("services_access_token", accessToken);
 	    Debug.println("makeUserCertificate succeeded: "+accessToken);
 	} catch (Exception e) {
+		request.getSession().setAttribute("services_access_token", null);
 		Debug.errprintln("makeUserCertificate Failed");
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -554,8 +555,8 @@ keytool -import -v -trustcacerts -alias slcs.ceda.ac.uk -file  slcs.ceda.ac.uk -
     
 //    PemX509Tools.writePrivateKeyToPemFile(privateKey, "/tmp/caprivate.key");
 //    
-//    PemX509Tools.writeCertificateToPemFile(userCert.getUserSlCertificate(), "/tmp/cert.crt");
-//    PemX509Tools.writePrivateKeyToPemFile(userCert.getPrivateKey(), "/tmp/cert.key");
+    PemX509Tools.writeCertificateToPemFile(userCert.getUserSlCertificate(), "/tmp/cert.crt");
+    PemX509Tools.writePrivateKeyToPemFile(userCert.getPrivateKey(), "/tmp/cert.key");
     
     /*
      * 
@@ -602,12 +603,16 @@ wget --no-check-certificate --private-key /tmp/test.key --certificate /tmp/test.
 
     Debug.println("Created user cert");
     //String url = "https://pc160116.knmi.nl:8090/wps?service=wps&request=getcapabilities";
-    String url = "https://pc160116.knmi.nl:8090/registertoken";
+    //String url = "https://pc160116.knmi.nl:8090/registertoken";
+    //String url = "https://bhw485.knmi.nl:9000/registertoken";
+    String url = "https://bhw512.knmi.nl:8090/registertoken";
     Debug.println("Requesting token from " + url);
     CloseableHttpResponse httpResponse = httpClient.execute(new HttpGet(url));
 	String result = EntityUtils.toString(httpResponse.getEntity());
 	JSONObject resultAsJSON = new JSONObject(result);
 	httpResponse.close();
+	
+	Debug.println("resultAsJSON:["+resultAsJSON+"]");
 	return resultAsJSON.getString("token");
 
   }
