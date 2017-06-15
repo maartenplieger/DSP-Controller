@@ -58,7 +58,8 @@ public class DataSciencePlatformController extends SpringBootServletInitializer{
 		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 		Properties props = new Properties();
 
-		if(MainServicesConfigurator.getServerPort()!=null)props.put("server.port", MainServicesConfigurator.getServerPort());
+		//if(MainServicesConfigurator.getServerPort()!=null)props.put("server.port", MainServicesConfigurator.getServerPort());
+		props.put("server.port", 9001);
 		if(SecurityConfigurator.getKeyStore()!=null)props.put("server.ssl.key-store", SecurityConfigurator.getKeyStore());
 		if( SecurityConfigurator.getKeyStorePassword()!=null)props.put("server.ssl.key-store-password", SecurityConfigurator.getKeyStorePassword());
 		if(SecurityConfigurator.getKeyStoreType()!=null)props.put("server.ssl.keyStoreType",SecurityConfigurator.getKeyStoreType());

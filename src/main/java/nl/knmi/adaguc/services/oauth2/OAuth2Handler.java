@@ -531,46 +531,12 @@ keytool -import -v -trustcacerts -alias slcs.ceda.ac.uk -file  slcs.ceda.ac.uk -
     try {
 		String accessToken = makeUserCertificate(userInfo.user_identifier.replaceAll("/", "."));
 	    request.getSession().setAttribute("services_access_token", accessToken);
-	} catch (InvalidKeyException e) {
+	    Debug.println("makeUserCertificate succeeded: "+accessToken);
+	} catch (Exception e) {
+		Debug.errprintln("makeUserCertificate Failed");
 		// TODO Auto-generated catch block
 		e.printStackTrace();
-	} catch (CertificateException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (NoSuchAlgorithmException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (OperatorCreationException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (KeyManagementException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (UnrecoverableKeyException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (KeyStoreException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (NoSuchProviderException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (SignatureException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (GSSException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (ConfigurationItemNotFoundException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (CertificateVerificationException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+	} 
   };
   
   private static String makeUserCertificate(String clientId) throws CertificateException, IOException, InvalidKeyException, NoSuchAlgorithmException, OperatorCreationException, KeyManagementException, UnrecoverableKeyException, KeyStoreException, NoSuchProviderException, SignatureException, GSSException, ConfigurationItemNotFoundException, CertificateVerificationException, JSONException {
@@ -637,6 +603,7 @@ wget --no-check-certificate --private-key /tmp/test.key --certificate /tmp/test.
     Debug.println("Created user cert");
     //String url = "https://pc160116.knmi.nl:8090/wps?service=wps&request=getcapabilities";
     String url = "https://pc160116.knmi.nl:8090/registertoken";
+    Debug.println("Requesting token from " + url);
     CloseableHttpResponse httpResponse = httpClient.execute(new HttpGet(url));
 	String result = EntityUtils.toString(httpResponse.getEntity());
 	JSONObject resultAsJSON = new JSONObject(result);
