@@ -529,18 +529,19 @@ keytool -import -v -trustcacerts -alias slcs.ceda.ac.uk -file  slcs.ceda.ac.uk -
     request.getSession().setAttribute("login_method", "oauth2");
     
     try {
-		String accessToken = makeUserCertificate(userInfo.user_identifier.replaceAll("/", "."));
-	    request.getSession().setAttribute("services_access_token", accessToken);
+    	JSONObject accessToken = makeUserCertificate(userInfo.user_identifier.replaceAll("/", "."));
+	    request.getSession().setAttribute("services_access_token", accessToken.get("token"));
+	    request.getSession().setAttribute("domain", accessToken.get("domain"));
 	    Debug.println("makeUserCertificate succeeded: "+accessToken);
+
 	} catch (Exception e) {
-		request.getSession().setAttribute("services_access_token", null);
-		Debug.errprintln("makeUserCertificate Failed");
-		// TODO Auto-generated catch block
+			request.getSession().setAttribute("services_access_token", null);
+			Debug.errprintln("makeUserCertificate Failed");
 		e.printStackTrace();
 	} 
   };
   
-  private static String makeUserCertificate(String clientId) throws CertificateException, IOException, InvalidKeyException, NoSuchAlgorithmException, OperatorCreationException, KeyManagementException, UnrecoverableKeyException, KeyStoreException, NoSuchProviderException, SignatureException, GSSException, ConfigurationItemNotFoundException, CertificateVerificationException, JSONException {
+  private static JSONObject makeUserCertificate(String clientId) throws CertificateException, IOException, InvalidKeyException, NoSuchAlgorithmException, OperatorCreationException, KeyManagementException, UnrecoverableKeyException, KeyStoreException, NoSuchProviderException, SignatureException, GSSException, ConfigurationItemNotFoundException, CertificateVerificationException, JSONException {
 
 	Debug.println("Making user cert for "+clientId);
     X509Certificate caCertificate = PemX509Tools.readCertificateFromPEM("/usr/people/tjalma/hackaton_config/config/knmi_ds_ca.pem");
@@ -607,13 +608,15 @@ wget --no-check-certificate --private-key /tmp/test.key --certificate /tmp/test.
     //String url = "https://bhw485.knmi.nl:9000/registertoken";
     String url = "https://bhw512.knmi.nl:8090/registertoken";
     Debug.println("Requesting token from " + url);
+    //String url = "https://bhw451.knmi.nl:8090/registertoken";
     CloseableHttpResponse httpResponse = httpClient.execute(new HttpGet(url));
 	String result = EntityUtils.toString(httpResponse.getEntity());
 	JSONObject resultAsJSON = new JSONObject(result);
+	resultAsJSON.put("domain", url.substring(0,url.lastIndexOf("/")).replaceAll("https://", ""));
 	httpResponse.close();
 	
 	Debug.println("resultAsJSON:["+resultAsJSON+"]");
-	return resultAsJSON.getString("token");
+	return resultAsJSON;
 
   }
 
