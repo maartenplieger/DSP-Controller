@@ -14,6 +14,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -41,6 +42,7 @@ public class ServiceHelperRequestMapper {
 		return converter;
 	}
 	@ResponseBody
+	@CrossOrigin
 	@RequestMapping("xml2json")
 	public void XML2JSON(@RequestParam(value="request")String request,@RequestParam(value="callback", required=false)String callback, HttpServletResponse response){
 		/**
@@ -49,6 +51,7 @@ public class ServiceHelperRequestMapper {
 		 * @param out1
 		 * @param response
 		 */
+		Debug.println("xml2json");
 
 		String requestStr;
 		OutputStream out;
