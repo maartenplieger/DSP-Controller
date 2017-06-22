@@ -64,7 +64,6 @@ public class AuthRequestMapper {
 			method = RequestMethod.GET 
 		)
 	public void getId(HttpServletResponse response, HttpServletRequest request) throws JSONException, IOException, ConfigurationItemNotFoundException{
-		Debug.println("GetID");
 		JSONResponse jsonResponse = new JSONResponse(request);
 
 		String id = (String) request.getSession().getAttribute("user_identifier");
@@ -76,37 +75,29 @@ public class AuthRequestMapper {
 		
 		if(isIdUnknown(id)){
 			jsonObj.put("error","Not signed in");
-			Debug.println("GetID not signed in");
 		}else{
 			jsonObj.put("id",id);
-			Debug.println("GetID Signed in");
 		}
 		
 		if(servicesAccessToken == null || servicesAccessToken.length() == 0
 				|| isIdUnknown(id)){
 			jsonObj.put("error","Not signed in");
-			Debug.println("GetID not signed in");
 		}else{
 			jsonObj.put("services_access_token",servicesAccessToken);
-			Debug.println("GetID Signed in");
 		}
 		
 		if(emailAddress == null || emailAddress.length() == 0
 				|| isIdUnknown(id)){
 			jsonObj.put("error","Not signed in");
-			Debug.println("GetID not signed in");
 		}else{
 			jsonObj.put("email_address",emailAddress);
-			Debug.println("GetID Signed in");
 		}
 		
 		if(domain == null || domain.length() == 0
 				|| isIdUnknown(id)){
 			jsonObj.put("error","Not signed in");
-			Debug.println("GetID not signed in");
 		}else{
 			jsonObj.put("domain",domain);
-			Debug.println("GetID Signed in");
 		}
 		
 		jsonResponse.setMessage(jsonObj);

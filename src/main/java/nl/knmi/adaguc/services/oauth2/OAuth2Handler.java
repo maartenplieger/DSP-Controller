@@ -605,8 +605,8 @@ wget --no-check-certificate --private-key /tmp/test.key --certificate /tmp/test.
     Debug.println("Created user cert");
     //String url = "https://pc160116.knmi.nl:8090/wps?service=wps&request=getcapabilities";
     //String url = "https://pc160116.knmi.nl:8090/registertoken";
-    //String url = "https://bhw485.knmi.nl:9000/registertoken";
-    String url = "https://bhw512.knmi.nl:8090/registertoken";
+    String url = "https://bhw485.knmi.nl:9000/registertoken";
+    //String url = "https://bhw512.knmi.nl:8090/registertoken";
     Debug.println("Requesting token from " + url);
     //String url = "https://bhw451.knmi.nl:8090/registertoken";
     CloseableHttpResponse httpResponse = httpClient.execute(new HttpGet(url));
